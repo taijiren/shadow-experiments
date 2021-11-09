@@ -143,8 +143,8 @@
                        :element-id id
                        :attr attr-key
                        :value (make-code env attr-value {})
-                       :src attrs}
-                      )))
+                       :src attrs})))
+                      
              (into []))
 
         child-env
@@ -180,10 +180,24 @@
           (meta el))
         {:element-id (next-el-id env)})
 
+      (::foreignObject env)
+      (make-code env
+        (with-meta
+          `(shadow.experiments.arborist/foreign-object ~el)
+          (meta el))
+        {:element-id (next-el-id env)})
+
       ;; FIXME: could analyze completely static elements and emit actual HTML strings and use DocumentFragment at runtime
       ;; that could potentially be faster with lots of completely static elements but that probably won't be too common
       :else
-      (analyze-dom-element env el))))
+      (analyze-dom-element
+       (if (and
+            (str/starts-with? (name tag-kw) "foreignObject")
+            (::svg env)
+            (not (::foreignObject env)))
+         (assoc env ::foreignObject true)
+         env)
+       el))))
 
 (defn analyze-text [env node]
   {:op :text
@@ -251,8 +265,8 @@
                     (update :mutations conj (with-loc ast `(set-attr ~env-sym ~(:sym ast) ~(:attr ast) nil ~(:value ast)))))
 
                 :dynamic-attr
-                (update env :mutations conj (with-loc ast `(set-attr ~env-sym ~(:sym ast) ~(:attr ast) nil (aget ~vals-sym ~(-> ast :value :ref-id)))))
-                )))
+                (update env :mutations conj (with-loc ast `(set-attr ~env-sym ~(:sym ast) ~(:attr ast) nil (aget ~vals-sym ~(-> ast :value :ref-id))))))))
+                
           {:bindings []
            :mutations []}
           ast)
@@ -366,8 +380,8 @@
                 calls
                 (-> calls
                     (conj
-                      `(clear-attr ~env-sym ~exports-sym ~(get sym->idx sym) ~(:attr ast) ~(:value ast))
-                      )))
+                      `(clear-attr ~env-sym ~exports-sym ~(get sym->idx sym) ~(:attr ast) ~(:value ast)))))
+                      
 
 
               :dynamic-attr
@@ -375,8 +389,8 @@
                 calls
                 (-> calls
                     (conj
-                      `(clear-attr ~env-sym ~exports-sym ~(get sym->idx sym) ~(:attr ast) (aget ~oldv-sym ~(-> ast :value :ref-id)))
-                      )))
+                      `(clear-attr ~env-sym ~exports-sym ~(get sym->idx sym) ~(:attr ast) (aget ~oldv-sym ~(-> ast :value :ref-id))))))
+                      
 
               calls))
           []
@@ -466,8 +480,10 @@
         ;; can't use nil for that since the logic will keep the current for nil
         ;; FIXME: mathml? still don't know what that is ... but seems to be a standard?
         ns-hint
-        (when (::svg macro-env)
-          `svg-ns)
+        (if (::svg macro-env)
+          `svg-ns
+          (when (::foreignObject macro-env)
+            :foreignObject))
 
         ;; this needs to be unique enough to not have collisions when using caching
         ;; just code-id isn't unique enough since multiple namespaces may end up with
