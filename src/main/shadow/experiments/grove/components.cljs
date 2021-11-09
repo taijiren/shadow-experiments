@@ -54,9 +54,9 @@
     ([this a1 a2 a3 a4 a5]
      (make-component-init this [a1 a2 a3 a4 a5]))
     ([this a1 a2 a3 a4 a5 a6]
-     (make-component-init this [a1 a2 a3 a4 a5 a6]))
+     (make-component-init this [a1 a2 a3 a4 a5 a6]))))
     ;; FIXME: add more, user should really use maps at this point
-    ))
+    
 
 (defn component-config? [x]
   (instance? gp/ComponentConfig x))
@@ -76,8 +76,8 @@
 (defn sort-fn [^ManagedComponent a ^ManagedComponent b]
   (compare
     (-> a (.-component-env) (::depth))
-    (-> b (.-component-env) (::depth))
-    ))
+    (-> b (.-component-env) (::depth))))
+    
 
 ;; FIXME: there are likely faster ways to do this
 (defn find-first-set-bit-idx [search]
@@ -100,10 +100,10 @@
 
   gp/IBuildHook
   (hook-build [this c i]
-    (EffectHook. deps callback callback-result should-call? c i))
+    (EffectHook. deps callback callback-result nil c i))
 
   gp/IHook
-  (hook-init! [this])
+  (hook-init! [this] (set! should-call? true))
   (hook-ready? [this] true)
   (hook-value [this] ::effect-hook)
   (hook-update! [this] false)
@@ -139,14 +139,13 @@
   gp/IHookDomEffect
   (hook-did-update! [this ^boolean did-render?]
     (when (or did-render? should-call?)
-      (when (fn? callback-result)
-        (callback-result))
 
-      (set! callback-result (callback (get-env component)))
+      (when should-call?
+        (set! callback-result (callback (get-env component))))
 
       (when (not= deps :render)
-        (set! should-call? false))
-      )))
+        (set! should-call? false)))))
+      
 
 (defclass ManagedComponent
   (field ^not-native scheduler)
