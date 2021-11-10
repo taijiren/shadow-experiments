@@ -257,8 +257,8 @@
 
       (not= result prev-result)))
 
-  (hook-destroy! [this]
-    ))
+  (hook-destroy! [this]))
+    
 
 (defn track-change [val trigger-fn]
   (TrackChange. val trigger-fn nil nil nil nil))

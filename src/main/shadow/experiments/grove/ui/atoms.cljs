@@ -2,6 +2,7 @@
   (:require
     [shadow.experiments.grove.components :as comp]
     [shadow.experiments.grove.protocols :as gp]
+    [shadow.experiments.grove.runtime :as rt]
     [shadow.experiments.grove.ui.util :as util]))
 
 (util/assert-not-in-worker!)
@@ -9,7 +10,9 @@
 (deftype EnvWatch [key-to-atom path default the-atom ^:mutable val component idx]
   gp/IBuildHook
   (hook-build [this c i]
-    (let [atom (get (comp/get-env c) key-to-atom)]
+    (let [atom (-> (get (comp/get-env c) ::rt/runtime-ref)
+                   deref
+                   (get key-to-atom))]
       (when-not atom
         (throw (ex-info "no atom found under key" {:key key-to-atom :path path})))
       (EnvWatch. key-to-atom path default atom nil c i)))
