@@ -22,8 +22,8 @@
         (set! root new-root)
         (p/update! root next)
         (p/dom-insert root container nil)
-        (p/dom-entered! root)
-        )))
+        (p/dom-entered! root))))
+        
 
   Object
   (destroy! [this ^boolean dom-remove?]

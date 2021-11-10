@@ -242,8 +242,8 @@
       (.remove marker-start)
       (.remove marker-end))
 
-    (run! (fn [^not-native child] (p/destroy! child dom-remove?)) children)
-    ))
+    (run! (fn [^not-native child] (p/destroy! child dom-remove?)) children)))
+    
 
 (defn as-managed-fragment [vec env]
   (let [children (into [] (map #(p/as-managed % env)) (subvec vec 1))]

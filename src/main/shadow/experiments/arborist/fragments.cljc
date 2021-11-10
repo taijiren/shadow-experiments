@@ -529,6 +529,9 @@
 (defmacro html [& body]
   (make-fragment &env &form body))
 
+(defmacro foreign-object [& body]
+  (make-fragment (assoc &env ::foreignObject true) &form body))
+
 (defmacro svg [& body]
   (make-fragment (assoc &env ::svg true) &form body))
 

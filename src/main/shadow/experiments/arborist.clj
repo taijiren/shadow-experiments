@@ -15,7 +15,7 @@
   (with-meta `(shadow.experiments.arborist.fragments/html ~@body) (meta &form)))
 
 (defmacro foreign-object [& body]
-  (with-meta `(shadow.experiments.arborist.fragments/foreignObject ~@body) (meta &form)))
+  (with-meta `(shadow.experiments.arborist.fragments/foreign-object ~@body) (meta &form)))
 
 (defmacro svg [& body]
   (with-meta `(shadow.experiments.arborist.fragments/svg ~@body) (meta &form)))

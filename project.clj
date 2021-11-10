@@ -9,8 +9,8 @@
               :sign-releases false}}
 
   :dependencies
-  [[org.clojure/clojure "1.10.1" :scope "provided"]
-   [org.clojure/clojurescript "1.10.773" :scope "provided"]]
+  [[org.clojure/clojure "1.11.0" :scope "provided"]
+   [org.clojure/clojurescript "1.10.891" :scope "provided"]]
 
   :resource-paths
   ["src/resources"]
@@ -30,6 +30,6 @@
      [thheller/shadow-undertow "0.1.0"]]}
    :cljs-dev ;; using this in shadow-cljs so can't use dev profile (Cursive complains about circular dep)
    {:dependencies
-    [[thheller/shadow-cljs "2.11.22"]
-     ]}})
+    [[thheller/shadow-cljs "2.15.10"]]}})
+     
 

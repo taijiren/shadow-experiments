@@ -63,8 +63,8 @@
     (.forEach exports
       (fn [item]
         (when (implements? p/IManaged item)
-          (p/dom-entered! item)
-          ))))
+          (p/dom-entered! item)))))
+          
 
   (supports? [this ^FragmentInit next]
     (and (fragment-init? next)
